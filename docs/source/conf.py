@@ -278,16 +278,7 @@ def locatePhoebusSources():
         return None
 
 def createDocListing(rst_file, header, roots):
-    with open(rst_file, 'w') as out:
-        out.write(header)
-        # Locate index.rst files (presumably under core/*/doc/index.rst or app/*/doc/index.rst)
-        # as well as existing html folders
-
-        out.write("""
-.. toctree::
-   :maxdepth: 1
-
-""")
+    with open('link.rst', 'wa') as out:
         for root in roots:
             for (dirpath, dirnames, filenames) in walk(root):
                 # Consider only 'original' files, not those
@@ -303,9 +294,19 @@ def createDocListing(rst_file, header, roots):
                     for filename in filenames:
                         if filename == 'index.rst':
                             print("Adding to applications.rst: " + dirpath + "/index.rst")
-                            file = path.join(dirpath, filename.replace(".rst", ""))
-                            out.write("   " + file + "\n")
+                            file = path.join(dirpath, filename)
+                            out.write(".. include:: " + file + "\n")
+    with open(rst_file, 'w') as out:
+        out.write(header)
+        # Locate index.rst files (presumably under core/*/doc/index.rst or app/*/doc/index.rst)
+        # as well as existing html folders
 
+        out.write("""
+.. toctree::
+   :maxdepth: 1
+
+""")
+        out.write("   link\n")
         out.write("\n")
 
 
@@ -367,22 +368,24 @@ To use them in your settings file, remember to prefix each setting with the pack
         
         out.write("\n")
 
-
-root = locatePhoebusSources()
-if root:
-    createDocListing('applications.rst', """Applications
+import os
+print(os.getcwd())
+#root = os.path.normpath(os.path.join(os.getcwd(), '../..'))
+root = '../..'
+print(root)
+createDocListing('applications.rst', """Applications
 ============
 
 The following sections describe details of specific application features.
 
 """, [ path.join(root, "core"), path.join(root, "app") ])
 
-    createDocListing('services.rst', """Services
+createDocListing('services.rst', """Services
 ========
 
 The following sections describe available services.
 
 """, [ path.join(root, "services") ])
 
-    createPreferenceAppendix(root)
+createPreferenceAppendix(root)
 
