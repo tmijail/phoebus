@@ -167,7 +167,10 @@
       </plugins>
     </build>
   </profile>
-  <!-- profile for and the website from the .rst files -->
+  <!--
+  Profile for building the documentation and the website from the .rst files.
+  Usage: mvn -P sphinx verify -N
+  -->
   <profile>
     <id>sphinx</id>
     <build>
